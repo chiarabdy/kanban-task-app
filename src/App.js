@@ -1,10 +1,11 @@
 // src/App.js
+
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { DragDropContext } from '@hello-pangea/dnd';
 import Confetti from 'react-confetti';
-import initialData from './data/initial-data'; // Path updated
-import Column from './components/KanbanBoard/Column'; // Path updated
+import initialData from './data/initial-data';
+import Column from './components/KanbanBoard/Column';
 
 const AppContainer = styled.div`
   font-family: 'Arial', sans-serif;
@@ -27,14 +28,17 @@ const BoardContainer = styled.div`
 function App() {
   const [data, setData] = useState(initialData);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [windowDimensions, setWindowDimensions] = useState({ 
-    width: window.innerWidth, 
-    height: window.innerHeight 
+  const [windowDimensions, setWindowDimensions] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
   });
 
   useEffect(() => {
     const handleResize = () => {
-      setWindowDimensions({ width: window.innerWidth, height: window.innerHeight });
+      setWindowDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -57,10 +61,40 @@ function App() {
     setData(newState);
   };
 
-  const onDragEnd = result => {
+  const handleDeleteTask = (taskIdToDelete) => {
+    const columnContainingTask = Object.values(data.columns).find((column) =>
+      column.taskIds.includes(taskIdToDelete)
+    );
+    if (!columnContainingTask) {
+      console.error('Task or column not found for deletion.');
+      return;
+    }
+    const newTaskIds = columnContainingTask.taskIds.filter(
+      (id) => id !== taskIdToDelete
+    );
+    const { [taskIdToDelete]: _, ...remainingTasks } = data.tasks;
+    const newState = {
+      ...data,
+      tasks: remainingTasks,
+      columns: {
+        ...data.columns,
+        [columnContainingTask.id]: {
+          ...columnContainingTask,
+          taskIds: newTaskIds,
+        },
+      },
+    };
+    setData(newState);
+  };
+
+  const onDragEnd = (result) => {
     const { destination, source, draggableId } = result;
     if (!destination) return;
-    if (destination.droppableId === source.droppableId && destination.index === source.index) return;
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    )
+      return;
     const startColumn = data.columns[source.droppableId];
     const finishColumn = data.columns[destination.droppableId];
     if (startColumn === finishColumn) {
@@ -68,7 +102,10 @@ function App() {
       newTaskIds.splice(source.index, 1);
       newTaskIds.splice(destination.index, 0, draggableId);
       const newColumn = { ...startColumn, taskIds: newTaskIds };
-      const newState = { ...data, columns: { ...data.columns, [newColumn.id]: newColumn } };
+      const newState = {
+        ...data,
+        columns: { ...data.columns, [newColumn.id]: newColumn },
+      };
       setData(newState);
       return;
     }
@@ -80,7 +117,11 @@ function App() {
     const newFinishColumn = { ...finishColumn, taskIds: finishTaskIds };
     const newState = {
       ...data,
-      columns: { ...data.columns, [newStartColumn.id]: newStartColumn, [newFinishColumn.id]: newFinishColumn },
+      columns: {
+        ...data.columns,
+        [newStartColumn.id]: newStartColumn,
+        [newFinishColumn.id]: newFinishColumn,
+      },
     };
     setData(newState);
     if (finishColumn.id === 'column-3') {
@@ -91,14 +132,29 @@ function App() {
 
   return (
     <AppContainer>
-      {showConfetti && <Confetti width={windowDimensions.width} height={windowDimensions.height} />}
-      <Header><h1>Kanban Task Tracker</h1></Header>
+      {showConfetti && (
+        <Confetti
+          width={windowDimensions.width}
+          height={windowDimensions.height}
+        />
+      )}
+      <Header>
+        <h1>Kanban Task Tracker</h1>
+      </Header>
       <DragDropContext onDragEnd={onDragEnd}>
         <BoardContainer>
-          {data.columnOrder.map(columnId => {
+          {data.columnOrder.map((columnId) => {
             const column = data.columns[columnId];
-            const tasks = column.taskIds.map(taskId => data.tasks[taskId]);
-            return <Column key={column.id} column={column} tasks={tasks} onAddTask={handleAddTask} />;
+            const tasks = column.taskIds.map((taskId) => data.tasks[taskId]);
+            return (
+              <Column
+                key={column.id}
+                column={column}
+                tasks={tasks}
+                onAddTask={handleAddTask}
+                onDeleteTask={handleDeleteTask}
+              />
+            );
           })}
         </BoardContainer>
       </DragDropContext>

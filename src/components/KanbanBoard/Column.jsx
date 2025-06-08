@@ -1,10 +1,13 @@
 // src/components/KanbanBoard/Column.jsx
+
+// --- These imports are necessary ---
 import React from 'react';
 import styled from 'styled-components';
 import { Droppable } from '@hello-pangea/dnd';
-import Task from './Task'; // Path updated
-import AddTaskForm from './AddTaskForm'; // Path updated
+import Task from './Task';
+import AddTaskForm from './AddTaskForm';
 
+// --- These styled-component definitions were likely missing ---
 const Container = styled.div`
   margin: 8px;
   border: 1px solid lightgrey;
@@ -21,12 +24,13 @@ const Title = styled.h3`
 const TaskList = styled.div`
   padding: 8px;
   transition: background-color 0.2s ease;
-  background-color: ${props => (props.isDraggingOver ? '#e3f2fd' : 'inherit')};
+  background-color: ${(props) => (props.isDraggingOver ? '#e3f2fd' : 'inherit')};
   flex-grow: 1;
   min-height: 100px;
 `;
 
-const Column = ({ column, tasks, onAddTask }) => {
+// --- The full, correct Column component ---
+const Column = ({ column, tasks, onAddTask, onDeleteTask }) => {
   return (
     <Container>
       <Title>{column.title}</Title>
@@ -38,7 +42,12 @@ const Column = ({ column, tasks, onAddTask }) => {
             isDraggingOver={snapshot.isDraggingOver}
           >
             {tasks.map((task, index) => (
-              <Task key={task.id} task={task} index={index} />
+              <Task
+                key={task.id}
+                task={task}
+                index={index}
+                onDeleteTask={onDeleteTask}
+              />
             ))}
             {provided.placeholder}
           </TaskList>

@@ -3,18 +3,17 @@ import React from 'react';
 import styled from 'styled-components';
 import { Draggable } from '@hello-pangea/dnd';
 
-// 1. Create a styled component for the delete button
 const DeleteButton = styled.button`
   position: absolute;
   top: 5px;
   right: 5px;
   padding: 2px 6px;
   border: none;
-  background-color: #f4f5f7; // Match column background
+  background-color: #f4f5f7;
   color: #6b778c;
   border-radius: 4px;
   cursor: pointer;
-  opacity: 0; // Make it invisible by default
+  opacity: 0; // The button is invisible by default.
   transition: opacity 0.2s ease-in-out;
   font-size: 14px;
   line-height: 1;
@@ -26,7 +25,7 @@ const DeleteButton = styled.button`
 `;
 
 const Container = styled.div`
-  position: relative; // Needed for positioning the delete button
+  position: relative; // This is required to position the delete button inside the container.
   border: 1px solid lightgrey;
   border-radius: 8px;
   padding: 12px;
@@ -35,13 +34,12 @@ const Container = styled.div`
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   font-family: 'Arial', sans-serif;
 
-  // 2. On hover, make the delete button visible
+  // 2. This CSS rule makes the delete button appear when we hover over the task card.
   &:hover ${DeleteButton} {
     opacity: 1;
   }
 `;
 
-// 3. Add 'onDeleteTask' to the component's props
 const Task = ({ task, index, onDeleteTask }) => {
   return (
     <Draggable draggableId={task.id} index={index}>
@@ -53,7 +51,6 @@ const Task = ({ task, index, onDeleteTask }) => {
           isDragging={snapshot.isDragging}
         >
           {task.content}
-          {/* 4. Add the button with an onClick handler */}
           <DeleteButton onClick={() => onDeleteTask(task.id)}>
             🗑️
           </DeleteButton>
