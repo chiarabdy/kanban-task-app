@@ -1,4 +1,4 @@
-// src/initial-data.js
+// src/data/initial-data.js
 const initialData = {
   tasks: {
     'task-1': { id: 'task-1', content: 'Review the script for the show "Fallout" (IMDb 8.4/10)' },
@@ -23,7 +23,6 @@ const initialData = {
       taskIds: [],
     },
   },
-  // We use this to remember the order of the columns
   columnOrder: ['column-1', 'column-2', 'column-3'],
 };
 

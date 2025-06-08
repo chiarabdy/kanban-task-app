@@ -1,8 +1,9 @@
-// src/Column.jsx
+// src/components/KanbanBoard/Column.jsx
 import React from 'react';
 import styled from 'styled-components';
 import { Droppable } from '@hello-pangea/dnd';
-import Task from './Task';
+import Task from './Task'; // Path updated
+import AddTaskForm from './AddTaskForm'; // Path updated
 
 const Container = styled.div`
   margin: 8px;
@@ -25,7 +26,7 @@ const TaskList = styled.div`
   min-height: 100px;
 `;
 
-const Column = ({ column, tasks }) => {
+const Column = ({ column, tasks, onAddTask }) => {
   return (
     <Container>
       <Title>{column.title}</Title>
@@ -43,6 +44,9 @@ const Column = ({ column, tasks }) => {
           </TaskList>
         )}
       </Droppable>
+      {column.id === 'column-1' && (
+        <AddTaskForm onAddTask={onAddTask} columnId={column.id} />
+      )}
     </Container>
   );
 };
